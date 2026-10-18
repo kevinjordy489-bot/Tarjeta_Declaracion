@@ -1,0 +1,606 @@
+/* =========================================================
+   ESCENA 2 — MINI JUEGO DE ESTRELLAS
+========================================================= */
+
+#scene-2 {
+    flex-direction: column;
+}
+
+.game-scene {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: clamp(70px, 9vh, 110px) clamp(16px, 4vw, 50px) 30px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.game-header {
+    position: relative;
+    width: 100%;
+    max-width: 850px;
+    text-align: center;
+    z-index: 20;
+    flex-shrink: 0;
+}
+
+.game-header h2 {
+    margin: 10px 0 8px;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(255,150,210,0.15);
+}
+
+.game-header p {
+    margin: 0;
+    font-size: clamp(14px, 1.5vw, 17px);
+    color: rgba(255,255,255,0.65);
+    line-height: 1.6;
+}
+
+.game-instruction {
+    margin-top: 8px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.38);
+}
+
+/* =========================================================
+   CONTADOR
+========================================================= */
+
+.star-counter-container {
+    width: min(260px, 80vw);
+    margin: 18px auto 14px;
+}
+
+.star-counter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    font-size: 17px;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.08em;
+}
+
+.counter-icon {
+    color: #ff9dca;
+    font-size: 21px;
+    filter: drop-shadow(0 0 8px rgba(255,130,190,0.8));
+    animation: gameCounterGlow 2s ease-in-out infinite;
+}
+
+#starsFound {
+    display: inline-block;
+    min-width: 20px;
+    font-weight: 600;
+    color: #ffffff;
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+#starsFound.counter-pop {
+    transform: scale(1.45);
+    color: #ff9dca;
+}
+
+.counter-separator {
+    color: rgba(255,255,255,0.3);
+}
+
+.star-progress {
+    position: relative;
+    width: 100%;
+    height: 3px;
+    margin-top: 10px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+}
+
+.star-progress-bar {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(180,140,255,0.8), rgba(255,150,205,1));
+    box-shadow: 0 0 12px rgba(255,150,210,0.5);
+    transition: width 0.6s cubic-bezier(.2,.8,.3,1);
+}
+
+/* =========================================================
+   ÁREA DEL JUEGO
+========================================================= */
+
+.star-game {
+    position: relative;
+    width: min(1100px, 100%);
+    flex: 1;
+    min-height: 330px;
+    margin-top: 5px;
+    border-radius: 28px;
+    overflow: hidden;
+    isolation: isolate;
+    cursor: crosshair;
+    border: 1px solid rgba(255,255,255,0.08);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(120,80,180,0.08), transparent 50%),
+        radial-gradient(circle at 20% 20%, rgba(255,120,190,0.06), transparent 35%),
+        linear-gradient(145deg, rgba(18,15,32,0.98), rgba(8,8,18,0.99));
+    box-shadow: inset 0 0 80px rgba(0,0,0,0.4), 0 20px 80px rgba(0,0,0,0.3);
+}
+
+/* =========================================================
+   LUZ DEL CURSOR
+========================================================= */
+
+.game-light {
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(255,170,215,0.12) 0%, rgba(150,120,255,0.06) 28%, transparent 70%);
+    filter: blur(5px);
+    z-index: 1;
+    transition: left 0.12s linear, top 0.12s linear;
+}
+
+/* =========================================================
+   NIEBLA
+========================================================= */
+
+.game-fog {
+    position: absolute;
+    width: 55%;
+    height: 55%;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    opacity: 0.14;
+    z-index: 0;
+}
+
+.fog-one {
+    left: -15%;
+    bottom: -25%;
+    background: rgba(140,90,255,0.35);
+    animation: gameFogMoveOne 14s ease-in-out infinite alternate;
+}
+
+.fog-two {
+    right: -15%;
+    top: -25%;
+    background: rgba(255,100,190,0.25);
+    animation: gameFogMoveTwo 18s ease-in-out infinite alternate;
+}
+
+/* =========================================================
+   ESTRELLAS DECORATIVAS
+========================================================= */
+
+.ambient-stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.ambient-stars span {
+    position: absolute;
+    color: rgba(255,255,255,0.4);
+    font-size: 7px;
+    animation: ambientTwinkle 3s ease-in-out infinite;
+}
+
+.ambient-stars span:nth-child(1)  { left: 8%;  top: 18%; }
+.ambient-stars span:nth-child(2)  { left: 18%; top: 70%; }
+.ambient-stars span:nth-child(3)  { left: 28%; top: 24%; font-size: 10px; }
+.ambient-stars span:nth-child(4)  { left: 37%; top: 78%; }
+.ambient-stars span:nth-child(5)  { left: 48%; top: 18%; }
+.ambient-stars span:nth-child(6)  { left: 58%; top: 70%; font-size: 10px; }
+.ambient-stars span:nth-child(7)  { left: 68%; top: 30%; }
+.ambient-stars span:nth-child(8)  { left: 77%; top: 82%; }
+.ambient-stars span:nth-child(9)  { left: 85%; top: 20%; font-size: 10px; }
+.ambient-stars span:nth-child(10) { left: 92%; top: 55%; }
+.ambient-stars span:nth-child(11) { left: 12%; top: 45%; }
+.ambient-stars span:nth-child(12) { left: 45%; top: 45%; }
+.ambient-stars span:nth-child(13) { left: 72%; top: 52%; }
+.ambient-stars span:nth-child(14) { left: 87%; top: 72%; }
+.ambient-stars span:nth-child(15) { left: 31%; top: 55%; }
+
+/* =========================================================
+   PISTA
+========================================================= */
+
+.game-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    color: rgba(255,255,255,0.42);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    pointer-events: none;
+    z-index: 15;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.game-hint.hidden-hint {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+}
+
+.hint-icon {
+    color: #ff9dca;
+    animation: hintPulse 1.8s ease-in-out infinite;
+}
+
+/* =========================================================
+   ESTRELLAS DEL JUEGO
+========================================================= */
+
+.game-star {
+    position: absolute;
+    width: 58px;
+    height: 58px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+    z-index: 10;
+    transform: translate(-50%, -50%);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.3s ease, opacity 0.4s ease;
+}
+
+.game-star::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,180,220,0.22), rgba(180,140,255,0.08) 40%, transparent 70%);
+    filter: blur(3px);
+    transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.game-star::after {
+    content: "";
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 7px #ffffff, 0 0 18px rgba(255,160,215,0.8), 0 0 35px rgba(180,140,255,0.45);
+    opacity: 0.9;
+}
+
+.game-star span {
+    position: relative;
+    display: block;
+    font-size: 30px;
+    line-height: 1;
+    color: #ffffff;
+    text-shadow: 0 0 5px #ffffff, 0 0 12px rgba(255,160,215,0.95), 0 0 28px rgba(180,130,255,0.7);
+    animation: gameStarFloat 2.5s ease-in-out infinite;
+}
+
+.game-star:hover {
+    transform: translate(-50%, -50%) scale(1.35);
+}
+
+.game-star:hover::before {
+    transform: scale(1.7);
+    opacity: 1;
+}
+
+.game-star:focus-visible {
+    outline: 2px solid rgba(255,180,220,0.9);
+    outline-offset: 6px;
+    border-radius: 50%;
+}
+
+.game-star.collecting {
+    pointer-events: none;
+    animation: starCollect 0.65s cubic-bezier(.2,.8,.3,1) forwards;
+}
+
+/* =========================================================
+   MENSAJE DE ESTRELLA
+========================================================= */
+
+.star-message {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(380px, 80%);
+    padding: 17px 22px;
+    transform: translate(-50%, -40%) scale(0.95);
+    opacity: 0;
+    pointer-events: none;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    background: rgba(20,15,32,0.72);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35), 0 0 40px rgba(255,130,200,0.08);
+    z-index: 30;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.star-message.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.star-message-icon {
+    margin-bottom: 7px;
+    color: #ff9dca;
+    font-size: 22px;
+    text-shadow: 0 0 15px rgba(255,150,210,0.8);
+}
+
+.star-message p {
+    margin: 0;
+    color: rgba(255,255,255,0.86);
+    font-size: clamp(13px, 1.4vw, 15px);
+    line-height: 1.6;
+}
+
+/* =========================================================
+   PARTÍCULAS
+========================================================= */
+
+.game-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: #ffffff;
+    box-shadow: 0 0 8px #ffffff, 0 0 16px rgba(255,150,210,0.8);
+    z-index: 25;
+}
+
+/* =========================================================
+   NÚCLEO FINAL
+========================================================= */
+
+.star-core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 80px;
+    height: 80px;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 35;
+    transition: transform 0.8s cubic-bezier(.2,.8,.3,1), opacity 0.5s ease;
+}
+
+.star-core.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.star-core > span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 40px;
+    text-shadow: 0 0 10px #ffffff, 0 0 30px rgba(255,150,210,1), 0 0 60px rgba(170,130,255,0.8);
+    animation: corePulse 1.2s ease-in-out infinite;
+}
+
+.core-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 50%;
+    border: 1px solid rgba(255,170,220,0.5);
+    transform: translate(-50%, -50%);
+    animation: coreRing 2s ease-out infinite;
+}
+
+.ring-one {
+    width: 70px;
+    height: 70px;
+}
+
+.ring-two {
+    width: 120px;
+    height: 120px;
+    animation-delay: 0.5s;
+}
+
+/* =========================================================
+   PANTALLA DE COMPLETADO
+========================================================= */
+
+.game-complete {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    background: radial-gradient(circle at center, rgba(90,60,130,0.18), rgba(5,5,14,0.94) 65%);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 50;
+    transform: scale(1.03);
+    transition: opacity 0.8s ease, transform 0.8s ease, visibility 0.8s ease;
+}
+
+.game-complete.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+.complete-stars {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.complete-stars span {
+    color: #ffb3d8;
+    font-size: 17px;
+    text-shadow: 0 0 15px rgba(255,140,205,0.8);
+    animation: completeStar 1.5s ease-in-out infinite;
+}
+
+.complete-stars span:nth-child(2) { animation-delay: .15s; }
+.complete-stars span:nth-child(3) { animation-delay: .3s; }
+.complete-stars span:nth-child(4) { animation-delay: .45s; }
+.complete-stars span:nth-child(5) { animation-delay: .6s; }
+
+.complete-icon {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 30px;
+    background: radial-gradient(circle, rgba(255,170,220,0.16), transparent 70%);
+    box-shadow: 0 0 40px rgba(255,140,210,0.2);
+    animation: completeIcon 2s ease-in-out infinite;
+}
+
+.game-complete h2 {
+    margin: 0 0 10px;
+    font-size: clamp(24px, 4vw, 36px);
+    color: #ffffff;
+}
+
+.complete-subtitle {
+    margin: 0 0 28px;
+    color: rgba(255,255,255,0.55);
+    font-size: 15px;
+}
+
+.game-continue-button {
+    margin-top: 10px;
+}
+
+/* =========================================================
+   ANIMACIONES
+========================================================= */
+
+@keyframes gameCounterGlow {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(255,130,190,0.8)); }
+    50%      { filter: drop-shadow(0 0 14px rgba(255,130,190,1)); }
+}
+
+@keyframes gameFogMoveOne {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(40px, -30px); }
+}
+
+@keyframes gameFogMoveTwo {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(-35px, 25px); }
+}
+
+@keyframes ambientTwinkle {
+    0%, 100% { opacity: 0.25; }
+    50%      { opacity: 0.7; }
+}
+
+@keyframes hintPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes gameStarFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+@keyframes starCollect {
+    0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+}
+
+@keyframes corePulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50%      { transform: translate(-50%, -50%) scale(1.12); }
+}
+
+@keyframes coreRing {
+    0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+
+@keyframes completeStar {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50%      { transform: scale(1.3); opacity: 1; }
+}
+
+@keyframes completeIcon {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+    .game-scene {
+        padding: 80px 14px 24px;
+    }
+
+    .star-game {
+        min-height: 300px;
+        border-radius: 22px;
+    }
+
+    .game-star {
+        width: 50px;
+        height: 50px;
+    }
+
+    .game-star span {
+        font-size: 26px;
+    }
+}

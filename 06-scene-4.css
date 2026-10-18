@@ -1,0 +1,218 @@
+/* =========================================================
+   ESCENA 4 — FINAL
+========================================================= */
+
+.final-scene {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.final-stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.final-line {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: finalReveal 1.2s forwards;
+}
+
+.line-1 {
+    font-size: 17px;
+    color: var(--text-soft);
+    animation-delay: .5s;
+}
+
+.line-2 {
+    margin-top: 25px;
+    color: #77738b;
+    animation-delay: 2s;
+}
+
+.line-3 {
+    margin-top: 40px;
+    font-size: clamp(55px, 10vw, 130px);
+    font-weight: 800;
+    letter-spacing: -5px;
+    background: linear-gradient(120deg, white, var(--pink-light), var(--purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation-delay: 3.3s;
+}
+
+.line-4 {
+    margin-top: 25px;
+    font-size: clamp(28px, 5vw, 60px);
+    animation-delay: 4.8s;
+}
+
+.final-signature {
+    margin-top: 35px;
+    color: #77738b;
+    line-height: 1.8;
+    opacity: 0;
+    animation: finalReveal 1.2s forwards;
+    animation-delay: 6.2s;
+}
+
+.final-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 40px;
+    opacity: 0;
+    animation: finalReveal 1.2s forwards;
+    animation-delay: 7s;
+}
+
+.exit-message {
+    position: fixed;
+    bottom: 30px;
+    opacity: 0;
+    pointer-events: none;
+    transition: .5s;
+    color: var(--pink-light);
+}
+
+.exit-message.show {
+    opacity: 1;
+}
+
+@media (max-width: 700px) {
+    .final-actions {
+        flex-direction: column;
+    }
+}
+
+
+/* =========================================================
+   MÚSICA (opcional / por si se usa después)
+========================================================= */
+
+.music-scene {
+    width: min(850px, 90vw);
+    text-align: center;
+}
+
+.music-player {
+    margin: 35px auto;
+    width: min(700px, 100%);
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    text-align: left;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    backdrop-filter: blur(20px);
+}
+
+.album-circle {
+    flex-shrink: 0;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: conic-gradient(var(--pink), var(--purple), var(--cyan), var(--pink));
+    animation: spin 10s linear infinite;
+    animation-play-state: paused;
+}
+
+.album-circle.playing {
+    animation-play-state: running;
+}
+
+.album-inner {
+    width: 55px;
+    height: 55px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--bg);
+    font-size: 22px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.music-info {
+    flex: 1;
+}
+
+.music-info > span {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--pink-light);
+}
+
+.music-info h3 {
+    margin: 8px 0 15px;
+}
+
+.music-time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-soft);
+}
+
+.music-progress {
+    height: 3px;
+    background: rgba(255,255,255,.1);
+    margin-top: 5px;
+}
+
+#musicProgress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--pink), var(--purple));
+}
+
+.music-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.music-controls button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.05);
+    color: white;
+    cursor: pointer;
+}
+
+#visualizer {
+    width: min(700px, 100%);
+    height: 150px;
+    margin: 20px auto;
+}
+
+.music-message {
+    font-size: 11px;
+    color: #77738b;
+    margin-bottom: 25px;
+}
+
+@media (max-width: 700px) {
+    .music-player {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .music-info {
+        width: 100%;
+    }
+}
